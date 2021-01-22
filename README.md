@@ -1,10 +1,12 @@
-# Websheet.js
+# websheet.js
+
+![size](https://img.shields.io/github/size/pierreavn/websheetjs/dist/websheet.min.js)
 
 **Render website sections with lazy-loaded data from Google Spreadsheets**  
 It's lightweight (4 Ko), fast, free and open-source !  
   
 **See how it works, full documentation and examples below:**  
-[https://github.com/pierreavn](https://github.com/pierreavn)
+[https://websheet.js.org](websheet.js.org)
 
 ## Contribute
 Feel free to contribute, and open issues!
