@@ -1,0 +1,18 @@
+{
+  "name": "websheetjs",
+  "version": "1.0.0",
+  "description": "Render website sections with lazy-loaded data from Google Spreadsheets",
+  "scripts": {
+    "start": "snowpack dev",
+    "build": "npx uglifyjs src/websheet.js --compress --mangle eval -o dist/websheet.min.js && ls -lh dist/websheet.min.js | awk '{print \"websheetjs minified! (\"$5\")\"}'",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Pierre Avinain",
+  "license": "ISC",
+  "devDependencies": {
+    "snowpack": "^2.18.5"
+  },
+  "dependencies": {
+    "uglify-es": "^3.3.9"
+  }
+}

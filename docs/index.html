@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Websheet.js</title>
+    
+    <link href="assets/css/prism.css" rel="stylesheet">
+    <link href="assets/css/style.css" rel="stylesheet">
+</head>
+<body>
+    <nav>
+        <div class="nav__title">
+            <a href="/">websheet.js</a>
+        </div>
+        <div class="nav__github">
+            <a class="github-button" href="https://github.com/pierreavn/websheetjs" data-size="large" data-show-count="true" aria-label="Star pierreavn/websheetjs on GitHub">&nbsp;Stars</a>
+        </div>
+    </nav>
+
+    <section class="dark intro">
+        <div style="width: 500px; height: 100px; margin: 0 auto; background-color: rgba(255, 255, 255, 0.171);"></div>
+        
+        <div>
+            <h1><strong class="text-primary">Render website sections</strong> 
+                with lazy-loaded data from <strong class="text-primary">Google Spreadsheets</strong></h1>
+            <h2>It's lightweight (4 Ko), fast, free and open-source !</h2>
+            <a href="documentation.html" class="button--outline">
+                Documentation
+            </a>
+            &nbsp;&nbsp;&nbsp;&nbsp;
+            <a href="demo.html" class="button--outline">
+                See Demo
+            </a>
+        </div>
+        
+        <div class="intro__scroll">
+            <div class="mouse"></div>
+            <div class="hint">Scroll to discover</div>
+        </div>
+    </section>
+
+    <section class="light">
+        <div class="container">
+            <h2>How it works?</h2>
+        </div>
+    </section>
+
+    <section class="dark">
+        <div class="container">
+            <div class="numtitle">
+                <div class="num">1</div>
+                <h2>Create & Share your spreadsheet</h2>
+            </div>
+        </div>
+
+        <br/><br/>
+
+        <div class="split-screenshot--left">
+            <div>
+                <img src="assets/img/gsheet.png" class="screenshot" alt="google sheet">
+            </div>
+            <div>
+                <p class="text-justify">
+                    Create a <a href="https://spreadsheet.new/" class="text-primary" target="_blank" rel="noopener">new Google Spreadsheet</a>
+                    including a header row (that will be used as your column names),
+                    and your data. You can use any cell format (dates, currencies, checkboxes, ...),
+                    even with URLs (links or photos), that will be rendered in your HTML.
+                </p>
+                <br/>
+                <p class="text-justify">
+                    After that, click on <strong>Share</strong>. In the <strong>Get link</strong> section,
+                    click on <strong>Change to anyone with the link</strong> to allow public
+                    read access to your spreadsheet. Then, copy the spreadsheet link.
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <section class="light">
+        <div class="container">
+            <div class="numtitle">
+                <div class="num">2</div>
+                <h2>Import websheet.js</h2>
+            </div>
+            <br/>
+            <p class="text-justify">
+                Import websheet.js <strong>before &lt;/body></strong>,
+                name the data source and provide the spreadsheet link and tab name.
+                You can declare as many data sources as you want,
+                using <strong>websheet</strong> function multiple times.
+            </p>
+
+            <pre><code class="language-html">&lt;script src="//cdn.jsdelivr.net/gh/pierreavn/websheetjs/dist/websheet.min.js">&lt;/script>
+&lt;script>
+  websheet('products', {  // <-- data source name
+
+    // URL of the spreadsheet
+    url: 'https://docs.google.com/spreadsheets/d/.../edit',
+
+    // Spreadsheet tab name
+    sheet: 'Products',
+
+  })
+&lt;/script></code></pre>
+
+            <br/>
+            <a href="documentation.html" class="button--outline">
+                More options & Examples
+            </a>
+        </div>
+    </section>
+
+    <section class="dark">
+        <div class="container">
+            <div class="numtitle">
+                <div class="num">3</div>
+                <h2>Render data</h2>
+            </div>
+            <br/>
+            <p class="text-justify">
+                Use data sources anywhere in the HTML page to render spreadsheets rows. And that's it!<br/>
+                <strong>Read the <a href="documentation.html" class="text-primary">documentation</a> to learn how to use filters, templates, events, loaders, etc.</strong>
+            </p>
+
+            <pre><code class="language-html">&lt;!-- Block below is duplicated for each row of data source "products" -->
+&lt;div data-websheet="products">
+
+    &lt;!-- Display only if checkbox is True -->
+    &lt;div data-websheet-if="Display ?">
+
+        &lt;!-- Display "Product" column value -->
+        &lt;div data-websheet-text="Product">&lt;/div>
+
+        &lt;!-- Bind "Picture" column value to src attribute -->
+        &lt;img data-websheet-bind:src="Picture" />
+
+    &lt;/div>
+
+&lt;/div></code></pre>
+
+            <br/>
+            <a href="documentation.html" class="button--outline">
+                More options & Examples
+            </a>
+        </div>
+    </section>
+
+    <section class="light">
+        <div class="container">
+            websheet.js&nbsp;2021&nbsp;&nbsp;|&nbsp;&nbsp;
+            <a href="https://github.com/pierreavn/websheetjs" target="_blank" rel="noopener" class="text-primary">View on GitHub</a>&nbsp;&nbsp;|&nbsp;&nbsp;
+            &copy;&nbsp;<a href="https://github.com/pierreavn" target="_blank" rel="noopener" class="text-primary">Pierre&nbsp;A.</a>
+        </div>
+    </section>
+
+    <script src="assets/js/prism.js"></script>
+    <script src="assets/js/script.js"></script>
+    <script async defer src="https://buttons.github.io/buttons.js"></script>
+</body>
+</html>

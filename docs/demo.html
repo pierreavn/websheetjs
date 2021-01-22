@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Websheet Bakery</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,100;0,300;0,400;0,700;0,900;1,100;1,300;1,400;1,700;1,900&display=swap');
+
+        html, body {
+            font-family: 'Lato', sans-serif;
+            text-align: center;
+            margin: 0;
+        }
+
+        h1 { margin-bottom: 50px; }
+        h2 { margin-top: 40px; }
+
+        img {
+            height: 140px;
+            margin-bottom: 40px;
+        }
+
+        .hint {
+            width: 100%;
+            background-color: #252423;
+            color: #F6F4F2;
+            padding: 30px 0;
+        }
+
+        .hint a {
+            text-decoration: none;
+            color: #55b76f;
+        }
+
+        .hint p {
+            margin-bottom: 25px;
+        }
+
+        .hint a.button--outline {
+            border: 1px solid #F6F4F2;
+            border-radius: 40px;
+            padding: 10px 30px;
+            display: inline-block;
+            margin: 0 20px;
+        }
+
+        .products {
+            display: flex;
+            flex-wrap: wrap;
+            flex-direction: row;
+            justify-content: center;
+            margin: 30px 0;
+        }
+
+        .product { margin: 0 20px; }
+    </style>
+</head>
+<body>
+    <div class="hint">
+        <p>
+            <strong>Here is demonstration of <a href="index.html">websheet.js</a></strong><br/>
+            1. Feel free to open source code and source spreadsheet below to understand!<br/>
+            2. Products below are displayed into categories ("Category" column), only if "Display?" column is checked.<br/>
+            3. Try to refresh the page to see how fast data are rendered! (caching)
+        </p>
+        <a href="https://github.com/pierreavn/websheetjs/blob/master/docs/demo.html" target="_blank" rel="noopener" class="button--outline">
+            Open Source Code
+        </a>
+        <a href="https://docs.google.com/spreadsheets/d/1enj8u4b7WA4Itrw8u5YEzt8MzwtRD1GkJNSWkl9GMK0/edit#gid=0" target="_blank" rel="noopener" class="button--outline">
+            Open Spreadsheet
+        </a>
+    </div>
+    <br/>
+
+    <!-- Product Template -->
+    <div data-websheet-template="product">
+
+        <!-- Loader -->
+        <div data-websheet-on:loading>
+            Loading...
+        </div>
+
+        <!-- When product is loaded... -->
+        <div class="product" data-websheet-on:loaded>
+
+            <!-- Display only if checkbox is True -->
+            <div data-websheet-if="Display ?">
+
+                <!-- Bind "Picture" column to img.src attribute -->
+                <img data-websheet-bind:src="Picture" data-websheet-bind:alt="Product">
+
+                <!-- Product Name -->
+                <div><strong data-websheet-text="Product"></strong></div>
+        
+                <!-- Price (including Discount) -->
+                <div data-websheet-unless="Discount?" data-websheet-text="Price"></div>
+                <div data-websheet-if="Discount?">
+                    <span style="text-decoration: line-through;" data-websheet-text="Price"></span>
+                    <strong data-websheet-text="Discounted Price"></strong>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Categories, filtered with aliases (see below) -->
+    <h1>-- Websheet Bakery --</h1>
+    <h2>Breads</h2>
+    <div class="products" data-websheet="products">
+        <div data-websheet-render="product" data-websheet-if="Bread?"></div>
+    </div>
+    <hr/>
+    <h2>Pastries</h2>
+    <div class="products" data-websheet="products">
+        <div data-websheet-render="product" data-websheet-if="Pastry?"></div>
+    </div>
+    <hr/>
+    <h2>Drinks</h2>
+    <div class="products" data-websheet="products">
+        <div data-websheet-render="product" data-websheet-if="Drink?"></div>
+    </div>
+
+    <!-- Websheet Configuration -->
+    <script src="//cdn.jsdelivr.net/gh/pierreavn/websheetjs/dist/websheet.min.js"></script>
+    <script>
+        websheet('products', {
+
+            /**
+             * URL of the spreadsheet
+             */
+            url: 'https://docs.google.com/spreadsheets/d/1enj8u4b7WA4Itrw8u5YEzt8MzwtRD1GkJNSWkl9GMK0/edit#gid=0',
+
+            /**
+             * Spreadsheet tab name
+             */
+            sheet: 'Products',
+
+            /**
+             * Enable caching (load as soon as possible cached version,
+             * and load data in parallel - replace cached data if real
+             * version has changed)
+             */
+            caching: true,
+
+            /**
+             * Query used to filter/sort results
+             * Here, sort results in alphabetical order (B = Product name)
+             */
+            query: `select * order by B`,
+
+            /**
+             * When data are received from spreadsheet,
+             * display them in console
+             */
+            onLoaded: data => console.log('data =', data),
+
+            /**
+             * Define new columns (aliases) to apply filters
+             */
+            aliases: {
+                // Aliases for each category
+                'Bread?': row => row['Category'].value === 'Breads',
+                'Pastry?': row => row['Category'].value === 'Pastries',
+                'Drink?': row => row['Category'].value === 'Drinks',
+
+                // Determine if these is discount or not on the product
+                'Discount?': row => {
+                    if (row['Discounted Price'].value && row['Discount End'].value) {
+                        return row['Discount End'].value > new Date();
+                    } else {
+                        return false;
+                    }
+                }
+            }
+
+        })
+    </script>
+</body>
+</html>

@@ -1,0 +1,411 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Websheet.js Documentation</title>
+  
+  <link href="assets/css/prism.css" rel="stylesheet">
+  <link href="assets/css/style.css" rel="stylesheet">
+</head>
+<body>
+  <nav>
+    <div class="nav__title">
+      <a href="index.html">websheet.js</a>
+    </div>
+    <div class="nav__github">
+      <a class="github-button" href="https://github.com/pierreavn/websheetjs" data-size="large" data-show-count="true" aria-label="Star pierreavn/websheetjs on GitHub">&nbsp;Stars</a>
+    </div>
+  </nav>
+  
+  <div class="container doc">
+    <aside class="doc__nav">
+      <ul>
+        <li data-section="about" class="doc-btn selected">About</li>
+        <li data-section="get-started" class="doc-btn">Get Started</li>
+        <li data-section="example" class="doc-btn">Example</li>
+        <li data-section="conditions" class="doc-btn">Conditions</li>
+        <li data-section="binding" class="doc-btn">Binding</li>
+        <li data-section="states" class="doc-btn">States</li>
+        <li data-section="templates" class="doc-btn">Templates</li>
+        <li data-section="aliases" class="doc-btn">Aliases</li>
+        <li data-section="querying" class="doc-btn">Querying</li>
+        <li data-section="caching" class="doc-btn">Caching</li>
+        <li data-section="callbacks" class="doc-btn">Callbacks</li>
+      </ul>
+    </aside>
+    <article class="doc__content">
+      <h1>Documentation</h1>
+      
+      <!-- ABOUT SECTION -->
+      <section data-id="about" class="doc-section">
+        <h2>About websheet.js</h2>
+        <p>
+          <strong>Websheet.js</strong> is a lightweight standalone JavaScript library 
+          for querying, retrieving, and displaying data from Google Spreadsheet.
+          Load entire worksheets or leverage SQL-like queries to sort, group, and filter data.
+          All you need is the URL of a public Google Spreadsheet.
+        </p>
+        
+        <p>
+          <strong>This is useful to allow other people than you to manage easily 
+            some pages content without CMS (restaurant menu, events list, ...).</strong>
+          </p>
+          
+          <div>
+            You can also:
+            <ul>
+              <li>Use SQL-like Google Visualization query language, for grouping, sorting, filters, pivots, ...</li>
+              <li>Create re-usage templates</li>
+              <li>Customize with your own callbacks</li>
+              <li>Define programatically new column aliases</li>
+            </ul>
+          </div>
+        </section>
+        
+        <!-- GET STARTED SECTION -->
+        <section data-id="get-started" class="doc-section">
+          <h2>Get Started</h2>
+          
+          <h3>1. Create & Share your spreadsheet</h3>
+          <p>
+            First, create a <a href="https://spreadsheet.new/" class="text-primary" target="_blank" rel="noopener">new Google Spreadsheet</a>
+            including <strong>a header row</strong> (that will be used as your column names),
+            and your data. You can use any cell format (dates, currencies, checkboxes, ...),
+            even with URLs (links or photos), that will be rendered in your HTML.
+          </p>
+          <p>
+            After that, click on <strong>Share</strong>, and in the <strong>Get link</strong> section,
+            click on <strong>Change to anyone with the link</strong> to allow public
+            read access to your spreadsheet. Then, copy the spreadsheet link.
+          </p>
+          <div>
+            <img src="assets/img/gsheet.png" alt="google sheet" style="width: 60%;">
+          </div>
+          <br/>
+          
+          <h3>2. Import websheet.js</h3>
+          <p>
+            Import websheet.js on your website <strong>before &lt;/body></strong>,
+            give a name to the data source and provide the spreadsheet link and tab name.
+            You can declare as many data sources as you want,
+            using <strong>websheet</strong> function multiple times.
+          </p>
+          <p>
+            You can use the CDN (<strong>recommended</strong>), or 
+            <a href="https://raw.githubusercontent.com/pierreavn/websheetjs/master/dist/websheet.min.js" class="text-primary" target="_blank">download it here</a>.
+          </p>
+          
+          <pre><code class="language-html">&lt;script src="//cdn.jsdelivr.net/gh/pierreavn/websheetjs/dist/websheet.min.js">&lt;/script>
+&lt;script>
+  websheet('products', {  // <-- data source name
+              
+    // URL of the spreadsheet
+    url: 'https://docs.google.com/spreadsheets/d/.../edit',
+              
+    // Spreadsheet tab name
+    sheet: 'Products',
+              
+  })
+&lt;/script></code></pre>
+            <br/>
+            <div>Scroll below to discover other options, such as:</div>
+            <ul>
+              <li><a href="javascript:smoothScrollToDocSection('aliases')" class="text-primary">Aliases</a> to create programatically new columns</li>
+              <li><a href="javascript:smoothScrollToDocSection('querying')" class="text-primary">Querying</a> to filter, group and order rows</li>
+              <li><a href="javascript:smoothScrollToDocSection('caching')" class="text-primary">Caching</a> to enable/disable client-side caching</li>
+              <li><a href="javascript:smoothScrollToDocSection('callbacks')" class="text-primary">Callbacks</a> to get raw data when they are loaded</li>
+            </ul>
+            <br/>
+            
+            <h3>3. Render data</h3>
+            <p class="text-justify">
+              Use data sources anywhere in the HTML page to render spreadsheets rows. And that's it!
+            </p>
+            
+            <pre><code class="language-html">&lt;!-- Block below is duplicated for each row of data source "products" -->
+&lt;div data-websheet="products">
+              
+  &lt;!-- Display only if checkbox is True -->
+  &lt;div data-websheet-if="Display ?">
+              
+    &lt;!-- Display "Product" column value -->
+    &lt;div data-websheet-text="Product">&lt;/div>
+              
+    &lt;!-- Bind "Picture" column value to src attribute -->
+    &lt;img data-websheet-bind:src="Picture" />
+              
+  &lt;/div>
+              
+&lt;/div></code></pre>
+<br/>
+            <div>Scroll below to discover other rendering options, such as:</div>
+            <ul>
+              <li><a href="javascript:smoothScrollToDocSection('conditions')" class="text-primary">Conditions</a> to display or not elements according to data</li>
+              <li><a href="javascript:smoothScrollToDocSection('binding')" class="text-primary">Binding</a> to use data in HTML attributes (images, links, ...)</li>
+              <li><a href="javascript:smoothScrollToDocSection('states')" class="text-primary">States</a> to display or not elements according to state (loader, ...)</li>
+              <li><a href="javascript:smoothScrollToDocSection('templates')" class="text-primary">Templates</a> to reuse similar structures in your page</li>
+            </ul>
+            </section>
+
+            <!-- EXAMPLE SECTION -->
+            <section data-id="example" class="doc-section">
+              <h2>Full Example</h2>
+              <p>
+                To see a full example in action, using all the features of websheet.js,
+                check the demo below:<br/>
+                <a href="demo.html" target="_blank" class="text-primary"> Open Full Demonstration </a>
+              </p>
+            </section>
+
+            <!-- CONDITIONS SECTIONS -->
+            <section data-id="conditions" class="doc-section">
+              <h2>Conditions</h2>
+              <p>
+                Use conditions to display or not elements according to data.
+                Provide directly the column name to check as boolean (you can use checkboxes in your spreadsheet).
+              </p>
+              <pre><code class="language-html">&lt;div data-websheet="products">
+              
+  &lt;!-- Display only if "Display?" column is checked -->
+  &lt;div data-websheet-if="Display?">
+    &lt;h1>Yes !&lt;/h1>
+  &lt;/div>
+
+  &lt;!-- Display only if "Display?" column is not checked -->
+  &lt;div data-websheet-unless="Display?">
+    &lt;h1>No&lt;/h1>
+  &lt;/div>
+              
+&lt;/div></code></pre>
+              <br/>
+              <p>
+                If you need more complex conditions (string comparisions, ranges, ...),
+                use <a href="javascript:smoothScrollToDocSection('aliases')" class="text-primary">Aliases</a>:
+              </p>
+              <pre><code class="language-html">&lt;div data-websheet="products">
+              
+  &lt;!-- Display only if "Category" column is equal to "Breads" -->
+  &lt;div data-websheet-if="Is Bread?">
+    &lt;h1>It's Bread! !&lt;/h1>
+  &lt;/div>
+              
+&lt;/div>
+
+...
+
+&lt;script>
+  websheet('products', {
+    ...
+
+    // Define "Is Bread?" alias
+    aliases: {
+      'Is Bread?': row => row['Category'].value === 'Breads',
+    }     
+  })
+&lt;/script></code></pre>
+            <p>
+              Read <a href="javascript:smoothScrollToDocSection('aliases')" class="text-primary">Aliases</a>
+              section for more information.
+            </p>
+            </section>
+
+            <!-- BINDING SECTION -->
+            <section data-id="binding" class="doc-section">
+              <h2>Binding</h2>
+              <p>
+                Binding allows you to use data in HTML attributes, useful for example in image.src, a.href, ...
+              </p>
+              <pre><code class="language-html">&lt;div data-websheet="products">
+              
+  &lt;!-- Display an image with src equal to "Picture" column -->
+  &lt;img data-websheet-bind:src="Picture" />
+
+  &lt;!-- Display a link with href equal to "Link" column -->
+  &lt;!-- and name equal to "Product" column -->
+  &lt;a data-websheet-bind:href="Link">
+    &lt;span data-websheet-text="Product">&lt;/span>
+  &lt;/a>
+              
+&lt;/div></code></pre>
+            </section>
+
+            <section data-id="states" class="doc-section">
+              <h2>States</h2>
+              <p>
+                States allows you to display or not elements according to state (loader, ...).
+              </p>
+              <pre><code class="language-html">&lt;div data-websheet="products">
+              
+  &lt;!-- Displayed when data are not loaded yet -->
+  &lt;div data-websheet-on:loading>
+    Loading...
+  &lt;/div>
+
+  &lt;!-- Displayed when data are loaded -->
+  &lt;div data-websheet-on:loaded>
+    &lt;h1 data-websheet-text="Product">&lt;/h1>
+  &lt;/div>
+              
+&lt;/div></code></pre>
+            </section>
+
+            <!-- TEMPLATES SECTION -->
+            <section data-id="templates" class="doc-section">
+              <h2>Templates</h2>
+              <p>
+                Templates allows you to reuse similar structures in your page,
+                for example if you wants to display at different locations of you website
+                the same data.
+              </p>
+              <pre><code class="language-html">&lt;!-- Product Template -->
+&lt;div data-websheet-template="my-product">
+  &lt;h1 data-websheet-text="Product">&lt;/h1>
+  &lt;h2 data-websheet-text="Category">&lt;/h2>
+&lt;/div>
+
+&lt;!-- Display Products List -->
+&lt;div data-websheet="products">
+  &lt;div data-websheet-render="myproduct">&lt;/div>
+&lt;/div>
+
+...
+
+&lt;!-- Display another location, but with pictures -->
+&lt;div data-websheet="products">
+  &lt;div data-websheet-render="myproduct">&lt;/div>
+  &lt;img data-websheet-bind:src="Picture" />
+&lt;/div></code></pre>
+            </section>
+
+            <!-- ALIASES SECTION -->
+            <section data-id="aliases" class="doc-section">
+              <h2>Aliases</h2>
+              <p>
+                You can easily create new column aliases programatically, in order to use them in your templates.
+                It's very useful for conditional checks, or to aggregate data from multiple columns.
+              </p>
+              <p>
+                Simply declare new column names, with value a function providing row data as parameter.
+                Those will be triggered for each row of your spreadsheet.
+              </p>
+              <pre><code class="language-js">websheet('products', {
+  ...
+
+  aliases: {
+
+    // Conditional Check
+    'Is Bread?': row => row['Category'].value === 'Breads',
+
+    // Aggregation
+    'Full Name': row => row['First Name'] + " " + row['Last Name'],
+
+    // More Complex
+    'Discount?': row => {
+        if (row['Discounted Price'].value && row['Discount End'].value) {
+            return row['Discount End'].value > new Date();
+        } else {
+            return false;
+        }
+    }
+
+  }     
+})</code></pre>
+              <br/>
+              <p>After that, you can use them in your templates as if it were an existing column:</p>
+              <pre><code class="language-html">&lt;div data-websheet="products">
+              
+  &lt;!-- Display "Full Name" alias value -->
+  &lt;div data-websheet-text="Full Name">&lt;/div>
+
+  &lt;!-- Display only if category is breads (alias) -->
+  &lt;div data-websheet-if="Is Bread?"> It's bread! &lt;/div>
+              
+&lt;/div></code></pre>
+            </section>
+
+            <!-- QUERYING SECTION -->
+            <section data-id="querying" class="doc-section">
+              <h2>Querying</h2>
+              <p>
+                Websheet.js supports 
+                <a href="https://developers.google.com/chart/interactive/docs/querylanguage" target="_blank" rel="noopener" class="text-primary">
+                  Google Visualization API Query Language</a>, which is similar to SQL syntax.
+                It provides the ability to initialize the data source format, by filtering, grouping or sorting rows.
+              </p>
+              <p>
+                <strong>NOTE: For now, only column indexes (A, B, ...) are supported in query language.</strong>
+              </p>
+              <p>For example, the code below will initialize the data source with first 100 rows, ordered by B (second) column.</p>
+              <pre><code class="language-js">websheet('products', {
+  ...
+  query: `select * order by B limit 100`,
+})</code></pre>
+              <p>
+                For more information about how to write queries, read the <a href="https://developers.google.com/chart/interactive/docs/querylanguage" target="_blank" rel="noopener" class="text-primary">
+                  detailed documentation here</a>.
+              </p>
+            </section>
+
+            <!-- CACHING SECTION -->
+            <section data-id="caching" class="doc-section">
+              <h2>Caching</h2>
+              <p>
+                In order to render and display the data faster, websheet.js is using client-side caching.
+                <strong>By default, caching is enabled.</strong>
+                Thus, the timing is the following:
+              </p>
+              <ol>
+                <li>If cached version of the data exists in the client browser, data are loaded instantly.</li>
+                <li>At the same time, a query to the Google Spreadsheet is always sent.</li>
+                <li>When Google servers has responded (generally after ~400ms),
+                  if websheet.js detects modifications between the cached version and the new one,
+                  the displayed data are replaced.
+                </li>
+                <li>Received data are stored in client browser cache, for the next time.</li>
+              </ol>
+              <p>With this system, spreadsheets data are always loaded instantly to the user.</p>
+              <p>To disable caching, simply mention it:</p>
+              <pre><code class="language-js">websheet('products', {
+  ...
+  caching: false,  // disable caching
+})</code></pre>
+            </section>
+
+            <!-- CALLBACKS SECTION -->
+            <section data-id="callbacks" class="doc-section">
+              <h2>Callbacks</h2>
+              <p>
+                For now, websheet.js handle a <strong>onLoaded</strong> callback,
+                triggered when data are loaded from Google Spreadsheet.
+              </p>
+              <pre><code class="language-js">websheet('products', {
+  ...
+  onLoaded: data => {
+    /**
+     * `data` format:
+     *  [
+     *     {"Display?": true, "Product": "Baguette", ...},
+     *     {"Display?": true, "Product": "Olive Bread", ...}
+     *     ...
+     *  ]
+     */
+  }
+})</code></pre>
+            </section>
+          </article>
+        </div>
+
+        <section class="light">
+          <div class="container">
+              websheet.js&nbsp;2021&nbsp;&nbsp;|&nbsp;&nbsp;
+              <a href="https://github.com/pierreavn/websheetjs" target="_blank" rel="noopener" class="text-primary">View on GitHub</a>&nbsp;&nbsp;|&nbsp;&nbsp;
+              &copy;&nbsp;<a href="https://github.com/pierreavn" target="_blank" rel="noopener" class="text-primary">Pierre&nbsp;A.</a>
+          </div>
+        </section>
+        
+        <script src="assets/js/prism.js"></script>
+        <script src="assets/js/script.js"></script>
+        <script async defer src="https://buttons.github.io/buttons.js"></script>
+      </body>
+      </html>
