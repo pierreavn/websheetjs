@@ -1,3 +1,8 @@
+// Initialize Animate-On-Scroll
+if (typeof AOS !== "undefined") {
+    AOS.init();
+}
+
 // In-page scrolling for documentaiton page
 const docBtns = [...document.querySelectorAll('.doc-btn[data-section]')];
 const docSections = [...document.querySelectorAll('.doc-section[data-id]')];

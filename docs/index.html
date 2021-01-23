@@ -4,9 +4,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Websheet.js</title>
+
+    <meta property="og:title" content="websheet.js - Render website sections with lazy-loaded data from Google Spreadsheets"/>
+    <meta name="description" content="Render website sections with lazy-loaded data from Google Spreadsheets."/>
+    <meta property="og:description" content="Render website sections with lazy-loaded data from Google Spreadsheets."/>
     
     <link href="assets/css/prism.css" rel="stylesheet">
     <link href="assets/css/style.css" rel="stylesheet">
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
 </head>
 <body>
     <nav>
@@ -19,19 +24,23 @@
     </nav>
 
     <section class="dark intro">
-        <div style="width: 500px; height: 100px; margin: 0 auto; background-color: rgba(255, 255, 255, 0.171);"></div>
+        <div class="intro__header">
+            <img src="assets/img/header.png" alt="header"/>
+        </div>
         
         <div>
             <h1><strong class="text-primary">Render website sections</strong> 
                 with lazy-loaded data from <strong class="text-primary">Google Spreadsheets</strong></h1>
             <h2>It's lightweight (4 Ko), fast, free and open-source !</h2>
-            <a href="documentation.html" class="button--outline">
-                Documentation
-            </a>
-            &nbsp;&nbsp;&nbsp;&nbsp;
-            <a href="demo.html" class="button--outline">
-                See Demo
-            </a>
+
+            <div class="intro__actions">
+                <a href="documentation.html" class="button--outline">
+                    Documentation
+                </a>
+                <a href="demo.html" class="button--outline">
+                    See Demo
+                </a>
+            </div>
         </div>
         
         <div class="intro__scroll">
@@ -41,22 +50,16 @@
     </section>
 
     <section class="light">
-        <div class="container">
-            <h2>How it works?</h2>
-        </div>
-    </section>
-
-    <section class="dark">
-        <div class="container">
+        <div class="container" data-aos="fade-right">
             <div class="numtitle">
                 <div class="num">1</div>
-                <h2>Create & Share your spreadsheet</h2>
+                <h2>Create Spreadsheet</h2>
             </div>
         </div>
 
         <br/><br/>
 
-        <div class="split-screenshot--left">
+        <div class="split-screenshot--left" data-aos="fade-right">
             <div>
                 <img src="assets/img/gsheet.png" class="screenshot" alt="google sheet">
             </div>
@@ -77,8 +80,8 @@
         </div>
     </section>
 
-    <section class="light">
-        <div class="container">
+    <section class="dark">
+        <div class="container" data-aos="fade-right">
             <div class="numtitle">
                 <div class="num">2</div>
                 <h2>Import websheet.js</h2>
@@ -111,8 +114,8 @@
         </div>
     </section>
 
-    <section class="dark">
-        <div class="container">
+    <section class="light">
+        <div class="container" data-aos="fade-right">
             <div class="numtitle">
                 <div class="num">3</div>
                 <h2>Render data</h2>
@@ -146,7 +149,7 @@
         </div>
     </section>
 
-    <section class="light">
+    <section class="dark">
         <div class="container">
             websheet.js&nbsp;2021&nbsp;&nbsp;|&nbsp;&nbsp;
             <a href="https://github.com/pierreavn/websheetjs" target="_blank" rel="noopener" class="text-primary">View on GitHub</a>&nbsp;&nbsp;|&nbsp;&nbsp;
@@ -154,6 +157,7 @@
         </div>
     </section>
 
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
     <script src="assets/js/prism.js"></script>
     <script src="assets/js/script.js"></script>
     <script async defer src="https://buttons.github.io/buttons.js"></script>

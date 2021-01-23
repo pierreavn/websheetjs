@@ -72,7 +72,7 @@ a.underline {
 
 section {
   position: relative;
-  padding: 60px 48px;
+  padding: 60px 40px;
 }
 
 section.full-height {
@@ -215,7 +215,7 @@ nav {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 0 48px;
+  padding: 0 40px;
   margin: 40px auto;
 }
 
@@ -231,7 +231,7 @@ nav .nav__title {
 */
 
 section.intro {
-  padding: 0 48px;
+  padding: 0 40px;
   text-align: center;
   height: calc(100vh - 100px) !important; /* deduce header height */
   display: flex;
@@ -240,13 +240,32 @@ section.intro {
   align-items: center;
 }
 
+section.intro .intro__header {
+  position: relative;
+}
+
+section.intro .intro__header img {
+  max-width: 500px;
+}
+
 section.intro h1 {
-  margin: 6vh auto 4vh auto;
+  margin: 2vh auto 4vh auto;
   max-width: 450px;
   font-weight: 300;
   line-height: 1.4;
   font-size: 1.5rem;
 }
+
+@media (max-width: 600px) {
+  section.intro .intro__header img {
+    max-width: 100%;
+  }
+
+  section.intro h1 {
+    margin: 5vh auto 4vh auto !important;
+  }
+}
+
 
 section.intro h2 {
   margin-bottom: 4vh;
@@ -256,6 +275,23 @@ section.intro h2 {
 
 section.intro a.button--outline {
   margin-bottom: 4vh;
+}
+
+section.intro .intro__actions {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+@media (max-width: 500px) {
+  section.intro .intro__actions {
+    flex-direction: column;
+  }
+}
+
+section.intro .intro__actions a {
+  margin-left: 16px;
+  margin-right: 16px;
 }
 
 section.intro .intro__scroll {
@@ -317,7 +353,7 @@ section.intro .intro__scroll .hint {
 .doc {
   display: flex;
   flex-grow: 1;
-  padding: 0 48px;
+  padding: 0 40px;
   font-weight: 300;
 }
 
