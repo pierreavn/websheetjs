@@ -4,7 +4,7 @@
   "description": "Render website sections with lazy-loaded data from Google Spreadsheets",
   "scripts": {
     "start": "snowpack dev",
-    "build": "npx uglifyjs src/websheet.js --compress --mangle eval -o dist/websheet.min.js && ls -lh dist/websheet.min.js | awk '{print \"websheetjs minified! (\"$5\")\"}'",
+    "build": "cp src/websheet.js dist/websheet.js && npx uglifyjs src/websheet.js --compress --mangle eval -o dist/websheet.min.js && ls -lh dist/websheet.min.js | awk '{print \"websheetjs minified! (\"$5\")\"}'",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Pierre Avinain",
