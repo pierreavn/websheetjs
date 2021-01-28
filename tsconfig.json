@@ -1,0 +1,14 @@
+{
+    "compilerOptions": {
+        "emitDecoratorMetadata": true,
+        "experimentalDecorators": true,
+        "target": "es6",
+        "module": "commonjs",
+        "moduleResolution": "node",
+        "removeComments": true,
+        "sourceMap": false,
+        "outDir": "build_tmp"
+        // "outFile": "build_tmp/websheet.js"
+    },
+    "include": ["src/**/*"]
+}
