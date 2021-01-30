@@ -11,7 +11,7 @@
 It's lightweight, fast, free and open-source !  
   
 **See how it works, full documentation and examples below:**  
-> [https://websheet.js.org](websheet.js.org)
+> [https://websheet.js.org](https://websheet.js.org)
   
   
 
