@@ -1,4 +1,4 @@
-import websheet from '../src/index';
+import * as websheet from '../src/index';
 
 describe("general", () => {
 

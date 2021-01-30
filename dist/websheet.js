@@ -30,9 +30,48 @@ exports.default = Cache;
 },{}],2:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+const handlers = [
+    { attribute: /^data-websheet-text$/,
+        valueSource: 'column',
+        handler: (block, attr, value) => {
+            if (value)
+                block.innerText = value.formatted || value.value;
+        } },
+    { attribute: /^data-websheet-html$/,
+        valueSource: 'column',
+        handler: (block, attr, value) => {
+            if (value)
+                block.innerHTML = value.value;
+        } },
+    { attribute: /^data-websheet-if$/,
+        valueSource: 'column',
+        handler: (block, attr, value) => {
+            if (!value || !value.value)
+                block.remove();
+        } },
+    { attribute: /^data-websheet-unless$/,
+        valueSource: 'column',
+        handler: (block, attr, value) => {
+            if (value && !!value.value)
+                block.remove();
+        } },
+    { attribute: /^data-websheet-bind:(.*)$/,
+        valueSource: 'column',
+        handler: (block, attr, value) => {
+            const targetAttr = attr.match(/^data-websheet-bind:(.*)$/)[1];
+            if (value)
+                block.setAttribute(targetAttr, value.formatted || value.value);
+        } },
+];
+exports.default = handlers;
+
+},{}],3:[function(require,module,exports){
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 const cache_1 = require("./cache");
 const snapshots_1 = require("./snapshots");
 const style_1 = require("./style");
+const formatters_1 = require("./formatters");
 window._websheet_handlers = {};
 document.head.insertAdjacentHTML("beforeend", style_1.default);
 class Websheet {
@@ -79,16 +118,15 @@ class Websheet {
                 }
                 return row;
             });
-            if (this.options.onLoaded && !cacheVersion) {
-                this.options.onLoaded(rows);
-            }
             if (this.options.caching) {
                 if (cacheVersion) {
                     this.cachedVersionSig = data.sig;
                 }
                 else if (data.sig !== this.cachedVersionSig) {
                     this.cache.setData(this.googleSheetUrl, data);
-                    this.snapshots.restore('before_cache_applied');
+                    if (this.snapshots.hasVersion('before_cache_applied')) {
+                        this.snapshots.restore('before_cache_applied');
+                    }
                 }
                 else {
                     return;
@@ -99,17 +137,23 @@ class Websheet {
             for (const section of this.sections) {
                 this.renderSection(section, rows);
             }
+            if (this.options.onLoaded && !cacheVersion) {
+                this.options.onLoaded(rows);
+            }
         };
         this.sections = [...document.querySelectorAll(`[data-websheet="${dataset}"]`)]
             .map(section => section);
         this.snapshots = new snapshots_1.Snapshots(this.sections);
         this.snapshots.capture('initial');
         this.cache = new cache_1.default(this.options.caching);
+        this.templates = {};
         const templates = document.querySelectorAll(`[data-websheet-template]`);
         for (const template of templates) {
             const name = template.dataset.websheetTemplate;
             this.templates[name] = template;
         }
+        this.renderTemplates();
+        this.snapshots.capture('initial');
     }
     exec() {
         if (!this.options.url || !this.options.sheet)
@@ -117,7 +161,6 @@ class Websheet {
         const urlParts = /^https:\/\/docs\.google\.com\/spreadsheets\/d\/([^/]*)\//g.exec(this.options.url);
         if (!urlParts)
             this.abort("Invalid spreadsheet url");
-        this.renderTemplates();
         this.fetchData(this.onDataReceived);
         const cachedData = this.cache.fetchData(this.googleSheetUrl);
         if (cachedData)
@@ -163,13 +206,53 @@ class Websheet {
         });
     }
     renderSection(section, rows) {
+        const sectionClones = [];
+        for (const row of rows) {
+            const sectionClone = section.cloneNode(true);
+            for (const formatter of formatters_1.default) {
+                const elements = [...sectionClone.querySelectorAll('*')].filter(element => {
+                    for (const attr of element.getAttributeNames()) {
+                        if (attr.match(formatter.attribute)) {
+                            return true;
+                        }
+                    }
+                    return false;
+                });
+                for (const element of elements) {
+                    for (const attr of element.getAttributeNames()) {
+                        if (attr.match(formatter.attribute)) {
+                            const attrInDataset = attr.substring(5).replace(/-[a-z]/g, group => group.substring(1).toUpperCase());
+                            const attrValue = element.dataset[attrInDataset].trim();
+                            if (formatter.valueSource === 'column') {
+                                if (row[attrValue]) {
+                                    formatter.handler(element, attr, row[attrValue]);
+                                }
+                                else {
+                                    this.abort(`Column or alias '${attrValue}' not found (used in ${attr})`);
+                                }
+                            }
+                            else {
+                                formatter.handler(element, attr, attrValue);
+                            }
+                        }
+                    }
+                }
+            }
+            sectionClone.className = `${sectionClone.className} websheet--loaded`;
+            sectionClones.push(sectionClone);
+        }
+        section.style.display = 'none';
+        for (let i = 0; i < sectionClones.length; i++) {
+            const ref = (i === 0 ? section : sectionClones[i - 1]);
+            ref.parentNode.insertBefore(sectionClones[i], ref.nextSibling);
+        }
     }
 }
 module.exports = (dataset, options) => {
     (new Websheet(dataset, options)).exec();
 };
 
-},{"./cache":1,"./snapshots":3,"./style":4}],3:[function(require,module,exports){
+},{"./cache":1,"./formatters":2,"./snapshots":4,"./style":5}],4:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Snapshots = void 0;
@@ -181,15 +264,18 @@ class Snapshots {
             versions: {}
         }));
     }
+    hasVersion(version) {
+        return this.versions.includes(version);
+    }
     capture(version) {
         for (const section of this.sections) {
             section.versions[version] = section.element.innerHTML;
         }
-        if (!this.versions.includes(version))
+        if (!this.hasVersion(version))
             this.versions.push(version);
     }
     restore(version) {
-        if (!this.versions.includes(version))
+        if (!this.hasVersion(version))
             throw new Error(`websheet versioning: version ${version} not found`);
         for (const section of this.sections) {
             section.element.innerHTML = section.versions[version];
@@ -198,7 +284,7 @@ class Snapshots {
 }
 exports.Snapshots = Snapshots;
 
-},{}],4:[function(require,module,exports){
+},{}],5:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = `<style>
@@ -211,6 +297,10 @@ exports.default = `<style>
     display: block;
 }
 
+.websheet--error[data-websheet] [data-websheet-on\\:loading] {
+    display: none;
+}
+
 [data-websheet-template],
 [data-websheet] [data-websheet-on\\:loaded],
 [data-websheet] [data-websheet-on\\:error],
@@ -220,5 +310,5 @@ exports.default = `<style>
 
 </style>`;
 
-},{}]},{},[2])(2)
+},{}]},{},[3])(3)
 });

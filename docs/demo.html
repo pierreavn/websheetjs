@@ -81,6 +81,11 @@
             Loading...
         </div>
 
+        <!-- If error occured -->
+        <div data-websheet-on:error>
+            An error occured
+        </div>
+
         <!-- When product is loaded... -->
         <div class="product" data-websheet-on:loaded>
 
@@ -106,18 +111,24 @@
     <!-- Categories, filtered with aliases (see below) -->
     <h1>-- Websheet Bakery --</h1>
     <h2>Breads</h2>
-    <div class="products" data-websheet="products">
-        <div data-websheet-render="product" data-websheet-if="Bread?"></div>
+    <div class="products">
+        <div data-websheet="products">
+            <div data-websheet-render="product" data-websheet-if="Bread?"></div>
+        </div>
     </div>
     <hr/>
     <h2>Pastries</h2>
-    <div class="products" data-websheet="products">
-        <div data-websheet-render="product" data-websheet-if="Pastry?"></div>
+    <div class="products">
+        <div data-websheet="products">
+            <div data-websheet-render="product" data-websheet-if="Pastry?"></div>
+        </div>
     </div>
     <hr/>
     <h2>Drinks</h2>
-    <div class="products" data-websheet="products">
-        <div data-websheet-render="product" data-websheet-if="Drink?"></div>
+    <div class="products">
+        <div data-websheet="products">
+            <div data-websheet-render="product" data-websheet-if="Drink?"></div>
+        </div>
     </div>
 
     <!-- Websheet Configuration -->

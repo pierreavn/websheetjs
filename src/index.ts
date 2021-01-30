@@ -27,8 +27,8 @@ class Websheet {
 
     constructor(
         private dataset: string,
-        private options: WebsheetOptions)
-    {
+        private options: WebsheetOptions
+    ) {
         // Fetch websheet sections
         this.sections = [...document.querySelectorAll(`[data-websheet="${dataset}"]`)]
             .map(section => <HTMLElement> section);
@@ -41,11 +41,18 @@ class Websheet {
         this.cache = new Cache(this.options.caching);
 
         // Declare templates
+        this.templates = {};
         const templates = document.querySelectorAll(`[data-websheet-template]`);
         for (const template of templates) {
             const name = (<HTMLElement> template).dataset.websheetTemplate;
             this.templates[name] = template;
         }
+
+        // Render templates sections
+        this.renderTemplates();
+
+        // Recapture initial template with rendered templates
+        this.snapshots.capture('initial');
     }
 
     /**
@@ -76,9 +83,6 @@ class Websheet {
         const urlParts = /^https:\/\/docs\.google\.com\/spreadsheets\/d\/([^/]*)\//g.exec(this.options.url);
         if (!urlParts)
             this.abort("Invalid spreadsheet url");
-
-        // Render templates sections
-        this.renderTemplates();
 
         // Fetch data from Google Sheet URL
         this.fetchData(this.onDataReceived);
@@ -181,11 +185,6 @@ class Websheet {
             return row;
         });
 
-        // Callback
-        if (this.options.onLoaded && !cacheVersion) {
-            this.options.onLoaded(rows);
-        }
-
         if (this.options.caching) {
             if (cacheVersion) {
                 this.cachedVersionSig = data.sig;
@@ -193,7 +192,9 @@ class Websheet {
                 this.cache.setData(this.googleSheetUrl, data);
                 
                 // Restore elements before cache applied
-                this.snapshots.restore('before_cache_applied');
+                if (this.snapshots.hasVersion('before_cache_applied')) {
+                    this.snapshots.restore('before_cache_applied');
+                }
             } else {
                 return; // everything is ok
             }
@@ -205,73 +206,65 @@ class Websheet {
         for (const section of this.sections) {
             this.renderSection(section, rows);
         }
+
+        // Callback
+        if (this.options.onLoaded && !cacheVersion) {
+            this.options.onLoaded(rows);
+        }
     }
 
     renderSection(section: HTMLElement, rows: any): void {
-        // // Clone section for each row
-        // let elClone = section.cloneNode(true);
-        // section.innerHTML = '';
-        // for (const row of rows) {
-        //     const clone = elClone.cloneNode(true);
+        const sectionClones = [];
 
-        //     // Apply formatters
-        //     for (const formatter of formatters) {
-        //         let blocks;
+        // Clone section for each row
+        for (const row of rows) {
+            const sectionClone = <HTMLElement> section.cloneNode(true);
 
-        //         for (const element of section.querySelectorAll('*')) {
-        //             for (const attr of element.getAttributeNames()) {
-        //                 if (attr.match(formatter.attribute)) {
+            // Apply formatters
+            for (const formatter of formatters) {
+                const elements = [...sectionClone.querySelectorAll('*')].filter(element => {
+                    for (const attr of element.getAttributeNames()) {
+                        if (attr.match(formatter.attribute)) {
+                            return true;
+                        }
+                    }
 
-        //                 }
-        //                     return true;
-        //             }
-        //         }
+                    return false;
+                });
 
-        //         return Array.prototype.slice.call(section.querySelectorAll('*')).filter(function (el) { 
-        //             for (const attr of el.getAttributeNames()) {
-        //                 if (attr.match(regEx))
-        //                     return true;
-        //             }
-        //             return false;
-        //         });
+                for (const element of elements) {
+                    for (const attr of element.getAttributeNames()) {
+                        if (attr.match(formatter.attribute)) {
+                            const attrInDataset = attr.substring(5).replace(/-[a-z]/g, group => group.substring(1).toUpperCase());
+                            const attrValue = (<HTMLElement> element).dataset[attrInDataset].trim();
 
-        //         if (cmd.tag instanceof RegExp) {
-        //             blocks = getAllTagMatchesAttribute(clone, cmd.tag);
-        //         } else {
-        //             blocks = clone.querySelectorAll(`[data-websheet-${cmd.tag}]`);
-        //         }
+                            if (formatter.valueSource === 'column') {
+                                if (row[attrValue]) {
+                                    formatter.handler(<HTMLElement> element, attr, row[attrValue]);
+                                } else {
+                                    this.abort(`Column or alias '${attrValue}' not found (used in ${attr})`);
+                                }
+                            } else {
+                                formatter.handler(<HTMLElement> element, attr, attrValue);
+                            }
+                        }
+                    }
+                }
+            }
 
-        //         for (const block of blocks) {
-        //             let attributes;
-        //             if (cmd.tag instanceof RegExp) {
-        //                 attributes = block.getAttributeNames().filter(attr => attr.match(cmd.tag));
-        //             } else {
-        //                 attributes = [`data-websheet-${cmd.tag}`];
-        //             }
+            sectionClone.className = `${sectionClone.className} websheet--loaded`;
+            sectionClones.push(sectionClone);
+        }
 
-        //             for (const attribute of attributes) {
-        //                 const attributeInDataset = 'websheet' + attribute.substr(14).split('-').map(part => `${part[0].toUpperCase()}${part.substr(1)}`).join('');
-        //                 const rule = block.dataset[attributeInDataset].trim();
-        //                 if (cmd.valueSource === 'column') {
-        //                     if (row[rule]) {
-        //                         cmd.handler(block, attribute, row[rule]);
-        //                     } else {
-        //                         abort(`Column or alias '${rule}' not found (used in data-websheet-${cmd.tag})`);
-        //                     }
-        //                 } else {
-        //                     cmd.handler(block, attribute, rule);
-        //                 }
-        //             }
-                    
-        //         }
-        //     }
-
-        //     el.appendChild(clone);
-        //     clone.className = `${clone.className} websheet--loaded`;
-        // }
+        // Hide section template and insert all clones
+        section.style.display = 'none';
+        for (let i = 0; i < sectionClones.length; i++) {
+            const ref = (i === 0 ? section : sectionClones[i-1]);
+            ref.parentNode.insertBefore(sectionClones[i], ref.nextSibling);
+        }
     }
 }
 
-export default (dataset: string, options: WebsheetOptions) => {
+module.exports = (dataset: string, options: WebsheetOptions) => {
     (new Websheet(dataset, options)).exec();
 }

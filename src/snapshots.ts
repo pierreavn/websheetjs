@@ -14,6 +14,14 @@ export class Snapshots {
     }
 
     /**
+     * Determine if existing snapshot with given version
+     * @param version 
+     */
+    hasVersion(version: string) {
+        return this.versions.includes(version);
+    }
+
+    /**
      * Capture sections state and HTML, to be restored later
      * @param version 
      */
@@ -22,7 +30,7 @@ export class Snapshots {
             section.versions[version] = section.element.innerHTML;
         }
 
-        if (!this.versions.includes(version))
+        if (!this.hasVersion(version))
             this.versions.push(version);
     }
 
@@ -31,7 +39,7 @@ export class Snapshots {
      * @param version 
      */
     restore(version: string) {
-        if (!this.versions.includes(version))
+        if (!this.hasVersion(version))
             throw new Error(`websheet versioning: version ${version} not found`);
             
         for (const section of this.sections) {

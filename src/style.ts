@@ -12,6 +12,10 @@ export default `<style>
     display: block;
 }
 
+.websheet--error[data-websheet] [data-websheet-on\\:loading] {
+    display: none;
+}
+
 [data-websheet-template],
 [data-websheet] [data-websheet-on\\:loaded],
 [data-websheet] [data-websheet-on\\:error],
