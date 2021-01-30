@@ -27,4 +27,4 @@ Feel free to contribute, and open issues!
   `npm test`
   - serve test server to display demo with your bundled version (http://localhost:8080/test/index.html):  
   `npm run serve`
-4. Submit your pull requests!
+4. Once you think you did something amazing, **run all the tests** and submit your pull requests!
