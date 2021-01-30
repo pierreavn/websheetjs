@@ -3,6 +3,8 @@
 </h1>
 <p align="center">
   <img src="https://img.shields.io/github/size/pierreavn/websheetjs/dist/websheet.min.js" alt="size">
+  &nbsp;
+  <img src="https://img.shields.io/github/workflow/status/pierreavn/websheetjs/Websheet.js%20CI" alt="GitHub Workflow Status">
 </p>
 
 **Render website sections with lazy-loaded data from Google Spreadsheets**  
